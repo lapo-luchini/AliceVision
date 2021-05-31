@@ -570,7 +570,7 @@ int aliceVision_main(int argc, char* argv[])
         ALICEVISION_LOG_INFO("Processing Intrinsic " << intrinsicIt.first);
 
         std::vector<double> params = cameraPinhole->getDistortionParams();
-        for(int i = 0; i < params.size(); i++)
+        for(std::size_t i = 0; i < params.size(); i++)
             params[i] = 0.0;
         cameraPinhole->setDistortionParams(params);
 
@@ -580,23 +580,23 @@ int aliceVision_main(int argc, char* argv[])
         for(const std::string lensGridFilepath : lensGridFilepaths)
         {
             //Check pixel ratio
-            float pixelRatio = 1.0f; // view->getDoubleMetadata({"PixelAspectRatio"}); // TODO
-            if (pixelRatio < 0.0) 
+            double pixelRatio = 1.0; // view->getDoubleMetadata({"PixelAspectRatio"}); // TODO
+            if (pixelRatio < 0.0)
             {
-                pixelRatio = 1.0f;
+                pixelRatio = 1.0;
             }
 
             //Read image
             image::Image<image::RGBColor> input;
             image::readImage(lensGridFilepath, input, image::EImageColorSpace::SRGB);
 
-            if (pixelRatio != 1.0f)
+            if (pixelRatio != 1.0)
             {
                 // if pixel are not squared, convert the image for lines extraction
-                double w = input.Width();
-                double h = input.Height();
-                double nw = w;
-                double nh = h / pixelRatio;
+                const double w = input.Width();
+                const double h = input.Height();
+                const double nw = w;
+                const double nh = h / pixelRatio;
                 image::Image<image::RGBColor> resizedInput(nw, nh);
 
                 const oiio::ImageSpec imageSpecResized(nw, nh, 3, oiio::TypeDesc::UCHAR);
